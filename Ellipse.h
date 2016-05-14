@@ -20,7 +20,7 @@ class EllipseGenerator
   std::normal_distribution<float> _noise_dist;
 public:
   EllipseGenerator(const EllipseGeometry& geometry, Eigen::Vector2f arc_span, float sigma) :
-    _geometry(geometry), _rotation(_geometry.angle), _arc_dist(arc_span(0), arc_span(1)), _noise_dist(sigma)
+      _geometry(geometry), _rotation(_geometry.angle), _arc_dist(arc_span(0), arc_span(1)), _noise_dist(0, sigma)
   { }
   const EllipseGeometry& geometry() const { return _geometry; }
   Eigen::Vector2f operator()();
