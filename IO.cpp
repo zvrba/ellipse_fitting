@@ -8,8 +8,8 @@ Eigen::Vector2f EllipseGenerator::operator()()
   float phi = _arc_dist(G_engine);
   Eigen::Array2f circle_point(std::cos(phi), std::sin(phi));
   Eigen::Array2f ellipse_point = _geometry.radius.array() * circle_point;
-  Eigen::Array2f noise(_noise_dist(G_engine), _noise_dist(G_engine));
-  Eigen::Vector2f rotated_ellipse_point = _rotation * ellipse_point.matrix();
+  Eigen::Vector2f noise(_noise_dist(G_engine), _noise_dist(G_engine));
+  Eigen::Vector2f rotated_ellipse_point = _rotation * (ellipse_point.matrix() + noise);
   return rotated_ellipse_point + _geometry.center;
 }
 
@@ -50,4 +50,8 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
   return EllipseGenerator(geometry, Eigen::Vector2f(phi_min, phi_max), sigma);
 }
 
-/////////////////////////////////////////////////////////////////////////////
+// We hard-code many of the parameters.
+std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n)
+{
+  
+}
