@@ -63,7 +63,7 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
 
 static Eigen::Vector2f get_center(const Eigen::MatrixX2f& points)
 {
-  auto sum = points.rowwise().sum();
+  auto sum = points.colwise().sum();
   return sum / points.rows();
 }
 
