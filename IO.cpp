@@ -1,4 +1,6 @@
 #include <cmath>
+#include <Eigen/Eigenvalues>
+#include <float.h>
 #include "Ellipse.h"
 
 static std::ranlux24 G_engine(271828);
@@ -64,4 +66,101 @@ std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n)
   for (size_t i = 0; i < n; ++i)
     ret.row(i) = g();
   return std::make_tuple(g.geometry(), ret);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// FITTING based on the following paper: http://autotrace.sourceforge.net/WSCG98.pdf
+
+static Eigen::Vector2f get_center(const Eigen::MatrixX2f& points)
+{
+  auto sum = points.rowwise().sum();
+  return sum / points.rows();
+}
+
+std::tuple<Eigen::Matrix3f,Eigen::Matrix3f,Eigen::Matrix3f>
+get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& center)
+{
+  using namespace Eigen;
+  
+  const auto qf = [&](size_t i) {
+    Vector2f p = points.row(i);
+    auto pc = p - center;
+    return Vector3f(pc(0)*pc(0), pc(0)*pc(1), pc(1)*pc(1));
+  };
+  const auto lf = [&](size_t i) {
+    Vector2f p = points.row(i);
+    auto pc = p - center;
+    return Vector3f(pc(0), pc(1), 1);
+  };
+  
+  const size_t n = points.rows();
+  MatrixX3f D1(n,3), D2(n,3);
+  
+  // Construct the quadratic and linear parts.  Doing it in two loops has better cache locality.
+  for (size_t i = 0; i < n; ++i)
+    D1.row(i) = qf(i);
+  for (size_t i = 0; i < n; ++i)
+    D2.row(i) = lf(i);
+  
+  // Construct the three parts of the symmetric scatter matrix.
+  auto S1 = D1.transpose() * D1;
+  auto S2 = D1.transpose() * D2;
+  auto S3 = D2.transpose() * D2;
+  return std::make_tuple(S1, S2, S3);
+}
+
+Eigen::Matrix<float, 6, 1> fit_solver(const Eigen::MatrixX2f& points)
+{
+  using namespace Eigen;
+  using std::get;
+  
+  static const struct C1_Initializer {
+    Matrix3f matrix;
+    Matrix3f inverse;
+    C1_Initializer()
+    {
+      matrix <<
+          0,  0, 2,
+          0, -1, 0,
+          2,  0, 0;
+      inverse <<
+            0,  0, 0.5,
+            0, -1,   0,
+          0.5,  0,   0; 
+    };
+  } C1;
+  
+  const auto center = get_center(points);
+  const auto St = get_scatter_matrix(points, center);
+  const auto& S1 = std::get<0>(St);
+  const auto& S2 = std::get<1>(St);
+  const auto& S3 = std::get<2>(St);
+  const auto T = -S3.inverse() * S2.transpose();
+  const auto M = C1.inverse * (S1 + S2*T);
+  
+  EigenSolver<Matrix3f> M_ev(M);
+  Vector3f cond;
+  {
+    const auto evr = M_ev.eigenvectors().real().array();
+    cond = 4*evr.row(0)*evr.row(2) - evr.row(1)*evr.row(1);
+  }
+
+  float min = FLT_MAX;
+  int imin = -1;
+  for (int i = 0; i < 3; ++i)
+  if (cond(i) > 0 && cond(i) < min) {
+    imin = i; min = cond(i);
+  }
+  
+  Matrix<float, 6, 1> ret = Matrix<float, 6, 1>::Zero();
+  
+  // No positive condition, return null vector.
+  if (imin < 0)
+    return ret;
+  
+  Vector3f a1 = M_ev.eigenvectors().real().row(imin);
+  Vector3f a2 = T*a1;
+  ret.block<3,1>(0,0) = a1;
+  ret.block<3,1>(3,0) = a2;
+  return ret;
 }
