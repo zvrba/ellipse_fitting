@@ -32,5 +32,5 @@ public:
 EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, float sigma,
     Eigen::Vector2f radiusSpan, float max_eccentricity);
 
-std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n);
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
+std::tuple<Vector6f, Eigen::Vector2f> fit_solver(const Eigen::MatrixX2f& points);
