@@ -4,7 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>EllipseGenerator.h</itemPath>
+      <itemPath>Ellipse.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -52,7 +52,7 @@
           <commandLine>-msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mavx</commandLine>
         </ccTool>
       </compileType>
-      <item path="EllipseGenerator.h" ex="false" tool="3" flavor2="0">
+      <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="IO.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -88,7 +88,7 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="EllipseGenerator.h" ex="false" tool="3" flavor2="0">
+      <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="IO.cpp" ex="false" tool="1" flavor2="0">
       </item>
