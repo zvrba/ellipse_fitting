@@ -17,6 +17,7 @@ public:
   };
   
 private:
+  // Generator parameters
   const float _min_arc;
   const float _min_ratio;
   std::ranlux24 _engine;
@@ -25,11 +26,12 @@ private:
   std::uniform_real_distribution<float> _angle_dist;
   std::normal_distribution<float> _noise_dist;
 
+  // Per-ellipse parameters
   Parameters _parameters;
   Eigen::Rotation2Df _rotation;
+  std::uniform_real_distribution<float> _arc_dist;
   
   void choose_parameters();
-  Eigen::Vector2f choose_point(std::uniform_real_distribution<float>& arc_dist);
   
 public:
   EllipseGenerator(float maxCenter, float minArc, float sigma, float minRadius, float maxRadius, float minRatio) :
@@ -42,5 +44,6 @@ public:
     _noise_dist(0, sigma)
   { }
     
+  Eigen::Vector2f operator()();
   std::tuple<std::vector<Eigen::Vector2f>, Parameters> generate(size_t n);
 };

@@ -26,13 +26,18 @@ void EllipseGenerator::choose_parameters()
   // Choose rotation
   _parameters.rotation = _angle_dist(_engine);
   _rotation = Eigen::Rotation2Df(_parameters.rotation);
+  
+  // Set arc RNG parameters
+  _arc_dist.param(std::uniform_real_distribution<float>::param_type(
+    _parameters.arc_span(0), _parameters.arc_span(1)));
 }
 
-Eigen::Vector2f EllipseGenerator::choose_point(std::uniform_real_distribution<float>& arc_dist)
+Eigen::Vector2f EllipseGenerator::operator()()
 {
-  float phi = arc_dist(_engine);
+  float phi = _arc_dist(_engine);
   Eigen::Array2f circle_point(std::cos(phi), std::sin(phi));
   Eigen::Array2f ellipse_point = _parameters.radius.array() * circle_point;
+  Eigen::Array2f noise(_noise_dist(_engine), _noise_dist(_engine));
   Eigen::Vector2f rotated_ellipse_point = _rotation * ellipse_point.matrix();
   return rotated_ellipse_point + _parameters.center;
 }
@@ -43,7 +48,8 @@ EllipseGenerator::generate(size_t n)
   choose_parameters();
   std::uniform_real_distribution<float> arc_dist(_parameters.arc_span(0), _parameters.arc_span(1));
   std::vector<Eigen::Vector2f> ret(n);
-  for (size_t i = 0; i < n; ++i)
-    ret[i] = choose_point(arc_dist);
+  std::generate(ret.begin(), ret.end(), *this);
   return std::make_tuple(std::move(ret), _parameters);
 }
+
+/////////////////////////////////////////////////////////////////////////////
