@@ -1,7 +1,13 @@
-#include <iostream>
+#include <cmath>
 #include "Ellipse.h"
 
 static std::ranlux24 G_engine(271828);
+
+std::ostream& operator<<(std::ostream& os, const EllipseGeometry& eg)
+{
+  os << "{ C:" << eg.center.transpose() << "; R:" << eg.radius.transpose() << "; A:" << eg.radius << " }";
+  return os;
+}
 
 Eigen::Vector2f EllipseGenerator::operator()()
 {

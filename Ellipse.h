@@ -1,7 +1,6 @@
 #pragma once
+#include <iostream>
 #include <random>
-#include <vector>
-#include <cmath>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
@@ -10,6 +9,8 @@ struct EllipseGeometry
   Eigen::Vector2f center;
   Eigen::Vector2f radius;
   float angle;
+  
+  friend std::ostream& operator<<(std::ostream&, const EllipseGeometry&);
 };
 
 class EllipseGenerator
