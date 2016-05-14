@@ -5,17 +5,15 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+struct EllipseGeometry
+{
+  Eigen::Vector2f center;
+  Eigen::Vector2f radius;
+  float rotation;
+};
+
 class EllipseGenerator
 {
-public:
-  struct Parameters
-  {
-    Eigen::Vector2f center;
-    Eigen::Vector2f radius;
-    Eigen::Vector2f arc_span;
-    float rotation;
-  };
-  
 private:
   // Generator parameters
   const float _min_arc;
@@ -27,11 +25,11 @@ private:
   std::normal_distribution<float> _noise_dist;
 
   // Per-ellipse parameters
-  Parameters _parameters;
+  EllipseGeometry _geometry;
   Eigen::Rotation2Df _rotation;
   std::uniform_real_distribution<float> _arc_dist;
   
-  void choose_parameters();
+  void choose_geometry();
   
 public:
   EllipseGenerator(float maxCenter, float minArc, float sigma, float minRadius, float maxRadius, float minRatio) :
@@ -45,5 +43,5 @@ public:
   { }
     
   Eigen::Vector2f operator()();
-  std::tuple<std::vector<Eigen::Vector2f>, Parameters> generate(size_t n);
+  std::tuple<std::vector<Eigen::Vector2f>, EllipseGeometry> generate(size_t n);
 };
