@@ -9,39 +9,23 @@ struct EllipseGeometry
 {
   Eigen::Vector2f center;
   Eigen::Vector2f radius;
-  float rotation;
+  float angle;
 };
 
 class EllipseGenerator
 {
-private:
-  // Generator parameters
-  const float _min_arc;
-  const float _min_ratio;
-  std::ranlux24 _engine;
-  std::uniform_real_distribution<float> _center_dist;
-  std::uniform_real_distribution<float> _radius_dist;
-  std::uniform_real_distribution<float> _angle_dist;
-  std::normal_distribution<float> _noise_dist;
-
-  // Per-ellipse parameters
-  EllipseGeometry _geometry;
+  const EllipseGeometry _geometry;
   Eigen::Rotation2Df _rotation;
   std::uniform_real_distribution<float> _arc_dist;
-  
-  void choose_geometry();
-  
+  std::normal_distribution<float> _noise_dist;
 public:
-  EllipseGenerator(float maxCenter, float minArc, float sigma, float minRadius, float maxRadius, float minRatio) :
-    _min_arc(minArc),
-    _min_ratio(minRatio),
-    _engine(2718282),
-    _center_dist(0, maxCenter),
-    _radius_dist(minRadius, maxRadius),
-    _angle_dist(0, 2*M_PI),
-    _noise_dist(0, sigma)
+  EllipseGenerator(const EllipseGeometry& geometry, Eigen::Vector2f arc_span, float sigma) :
+    _geometry(geometry), _rotation(_geometry.angle), _arc_dist(arc_span(0), arc_span(1)), _noise_dist(sigma)
   { }
-    
+  const EllipseGeometry& geometry() const { return _geometry; }
   Eigen::Vector2f operator()();
-  std::tuple<std::vector<Eigen::Vector2f>, EllipseGeometry> generate(size_t n);
 };
+
+EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, float sigma,
+    Eigen::Vector2f radiusSpan, float min_eccentricity);
+
