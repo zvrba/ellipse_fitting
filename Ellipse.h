@@ -4,6 +4,8 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+using Vector6f = Eigen::Matrix<float, 6, 1>;
+
 struct EllipseGeometry
 {
   Eigen::Vector2f center;

@@ -77,7 +77,7 @@ static Eigen::Vector2f get_center(const Eigen::MatrixX2f& points)
   return sum / points.rows();
 }
 
-std::tuple<Eigen::Matrix3f,Eigen::Matrix3f,Eigen::Matrix3f>
+static std::tuple<Eigen::Matrix3f,Eigen::Matrix3f,Eigen::Matrix3f>
 get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& center)
 {
   using namespace Eigen;
@@ -109,7 +109,8 @@ get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& center
   return std::make_tuple(S1, S2, S3);
 }
 
-Eigen::Matrix<float, 6, 1> fit_solver(const Eigen::MatrixX2f& points)
+std::tuple<Vector6f, Eigen::Vector2f>
+fit_solver(const Eigen::MatrixX2f& points)
 {
   using namespace Eigen;
   using std::get;
@@ -152,15 +153,12 @@ Eigen::Matrix<float, 6, 1> fit_solver(const Eigen::MatrixX2f& points)
     imin = i; min = cond(i);
   }
   
-  Matrix<float, 6, 1> ret = Matrix<float, 6, 1>::Zero();
-  
-  // No positive condition, return null vector.
-  if (imin < 0)
-    return ret;
-  
-  Vector3f a1 = M_ev.eigenvectors().real().row(imin);
-  Vector3f a2 = T*a1;
-  ret.block<3,1>(0,0) = a1;
-  ret.block<3,1>(3,0) = a2;
-  return ret;
+  Vector6f ret = Matrix<float, 6, 1>::Zero();
+  if (imin >= 0) {
+    Vector3f a1 = M_ev.eigenvectors().real().row(imin);
+    Vector3f a2 = T*a1;
+    ret.block<3,1>(0,0) = a1;
+    ret.block<3,1>(3,0) = a2;
+  }
+  return std::make_tuple(ret, center);
 }
