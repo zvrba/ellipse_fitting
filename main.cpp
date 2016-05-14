@@ -1,13 +1,32 @@
+#include <cstdlib>
 #include <iostream>
+#include "Ellipse.h"
 
 static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n);
 
 int main(int argc, char** argv)
 {
+  using namespace std;
+  
   if (argc < 3) {
-    std::cerr << "USAGE: " << argv[0] << " NPOINTS SIGMA";
+    cerr << "USAGE: " << argv[0] << " NPOINTS SIGMA" << endl;
     return 1;
   }
+  
+  size_t npoints = std::atoi(argv[1]);
+  float sigma = std::atof(argv[2]);
+  
+  auto problem = generate_problem(npoints);
+  cout << "PROBLEM:"
+      << "\nELLIPSE:\n" << get<0>(problem)
+      << "\nPOINTS:\n" << get<1>(problem)
+      << endl;
+
+  auto solution = fit_solver(get<1>(problem));
+  cout << "COEFFICIENTS:\n" << get<0>(solution)
+      << "\nCENTER:\n" << get<1>(solution)
+      << endl;
+  
   return 0;
 }
 
