@@ -7,7 +7,7 @@ static std::ranlux24 G_engine(271828);
 
 std::ostream& operator<<(std::ostream& os, const EllipseGeometry& eg)
 {
-  os << "{ C:" << eg.center.transpose() << "; R:" << eg.radius.transpose() << "; A:" << eg.radius << " }";
+  os << "{ C:" << eg.center.transpose() << "; R:" << eg.radius.transpose() << "; A:" << eg.angle << " }";
   return os;
 }
 
