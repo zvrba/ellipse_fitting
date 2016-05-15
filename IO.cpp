@@ -1,5 +1,6 @@
 #include <cmath>
 #include <Eigen/Eigenvalues>
+#include <Eigen/SVD>
 #include <float.h>
 #include "Ellipse.h"
 
@@ -180,11 +181,14 @@ EllipseGeometry to_ellipse(const Conic& conic)
   Matrix2f S;
   S << aa, bb/2, bb/2, cc;
   S /= -ff;
-  
-  SelfAdjointEigenSolver<Matrix2f> es(S);
-  
+
+  // SVs are sorted from largest to smallest
+  JacobiSVD<Matrix2f> svd(S, ComputeFullU);
+  const auto& vals = svd.singularValues();
+  const auto& mat_u = svd.matrixU();
+
   Vector2f center = c + std::get<1>(conic);
-  Vector2f radius = Vector2f(std::sqrt(1.f/es.eigenvalues()(0)), std::sqrt(1.f/es.eigenvalues()(1)));
-  float angle = M_PI - std::atan2(es.eigenvectors()(1,0), es.eigenvectors()(1,1));
+  Vector2f radius = Vector2f(std::sqrt(1.f/vals(1)), std::sqrt(1.f/vals(0)));
+  float angle = M_PI - std::atan2(mat_u(1,0), mat_u(0,0));
   return EllipseGeometry{center, radius, angle};
 }
