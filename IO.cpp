@@ -34,8 +34,10 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
   float cx = center_dist(G_engine);
   float cy = center_dist(G_engine);
   
-  // Rotation.
+  // Rotation. Doesn't make sense to rotate ellipse more than 180 deg.
   float angle = angle_dist(G_engine);
+  if (angle > M_PI)
+    angle -= M_PI;
   
   // Radii; eccentricity must not be below min_eccentricity.
   float a, b;
