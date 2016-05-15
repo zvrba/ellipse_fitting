@@ -27,8 +27,8 @@ int main(int argc, char** argv)
       << "\nOFFSET:\n" << get<1>(conic)
       << endl;
   
-  auto geometry = to_ellipse_1(conic);
-  cout << "FIT:\n" << geometry << endl;
+  auto ell = to_ellipse(conic);
+  cout << "FIT:\n" << ell << endl;
   
   return 0;
 }

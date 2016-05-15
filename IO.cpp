@@ -153,33 +153,38 @@ fit_solver(const Eigen::MatrixX2f& points)
   return std::make_tuple(ret, offset);
 }
 
-// Recipe taken from https://www.cs.cornell.edu/cv/OtherPdf/Ellipse.pdf
-EllipseGeometry to_ellipse_1(const Conic& conic)
+// Taken from OpenCV old code; see
+// https://github.com/Itseez/opencv/commit/4eda1662aa01a184e0391a2bb2e557454de7eb86#diff-97c8133c3c171e64ea0df0db4abd033c
+EllipseGeometry to_ellipse(const Conic& conic)
 {
   using namespace Eigen;
-  const auto& coef = std::get<0>(conic);
-  const auto& offset = std::get<1>(conic);
-  const float aa = coef(0), bb = coef(1), cc = coef(2), dd = coef(3), ee = coef(4), ff = coef(5);
-  Matrix3f M0;
+  auto coef = std::get<0>(conic);
 
-  // Even permutation of rows/cols wrt the paper doesn't change the determinant sign
-  M0 << aa, bb/2, dd/2, bb/2, cc, ee/2, dd/2, ee/2, ff;
-  auto M = M0.block<2,2>(0,0);
+  float idet = coef(0)*coef(2) - coef(1)*coef(1)/4; // ac-b^2/4
+  idet = idet > FLT_EPSILON ? 1.f/idet : 0;
   
-  float lam1, lam2, M0_det, M_det;
-  {
-    M0_det = M0.determinant();
-    M_det = M.determinant();
-    SelfAdjointEigenSolver<Matrix2f> es(M, false);
-    lam1 = es.eigenvalues()(0);
-    lam2 = es.eigenvalues()(1);
-    if (std::fabs(lam1-aa) > std::fabs(lam1-cc))
-      std::swap(lam1, lam2);
-  }
+  float scale = std::sqrt(idet/4);
+  if (scale < FLT_EPSILON)
+    throw std::domain_error("to_ellipse_2: singularity 1");
   
-  float disc = 4*aa*cc - bb*bb;
-  Vector2f center = Vector2f(bb*ee-2*cc*dd, bb*dd-2*aa*ee) / disc;
-  Vector2f radius = Vector2f(-M0_det / (M_det*lam1), -M0_det / (M_det*lam2)).cwiseSqrt();
-  float tau = std::atan(bb/(aa-cc))/2;  // acot(x) = atan(1/x)
-  return EllipseGeometry{center+offset, radius, tau};
+  coef *= scale;
+  float aa = coef(0), bb = coef(1), cc = coef(2), dd = coef(3), ee = coef(4), ff = coef(5);
+  
+  const Vector2f c = Vector2f(-dd*cc + ee*bb/2, -aa*ee + dd*bb/2) * 2;
+  
+  // offset ellipse to (x0,y0)
+  ff += aa*c(0)*c(0) + bb*c(0)*c(1) + cc*c(1)*c(1) + dd*c(0) + ee*c(1);
+  if (std::fabs(ff) < FLT_EPSILON)
+    throw std::domain_error("to_ellipse_2: singularity 2");
+  
+  Matrix2f S;
+  S << aa, bb/2, bb/2, cc;
+  S /= -ff;
+  
+  SelfAdjointEigenSolver<Matrix2f> es(S);
+  
+  Vector2f center = c + std::get<1>(conic);
+  Vector2f radius = Vector2f(std::sqrt(1.f/es.eigenvalues()(0)), std::sqrt(1.f/es.eigenvalues()(1)));
+  float angle = M_PI - std::atan2(es.eigenvectors()(1,0), es.eigenvectors()(1,1));
+  return EllipseGeometry{center, radius, angle};
 }

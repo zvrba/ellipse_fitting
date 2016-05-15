@@ -40,4 +40,5 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
 
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
 Conic fit_solver(const Eigen::MatrixX2f& points);
-EllipseGeometry to_ellipse_1(const Conic&);
+EllipseGeometry to_ellipse(const Conic&);
+
