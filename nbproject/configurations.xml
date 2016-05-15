@@ -51,6 +51,12 @@
           </incDir>
           <commandLine>-msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mavx</commandLine>
         </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>opencv_core</linkerLibLibItem>
+            <linkerLibLibItem>opencv_highgui</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -87,6 +93,12 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>opencv_core</linkerLibLibItem>
+            <linkerLibLibItem>opencv_highgui</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
