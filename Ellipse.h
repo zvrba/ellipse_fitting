@@ -18,6 +18,9 @@ struct EllipseGeometry
   friend std::ostream& operator<<(std::ostream&, const EllipseGeometry&);
 };
 
+// 6 coefficients + center offset
+using Conic = std::tuple<Eigen::Vector6f, Eigen::Vector2f>;
+
 class EllipseGenerator
 {
   const EllipseGeometry _geometry;
@@ -36,5 +39,5 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
     Eigen::Vector2f radiusSpan, float max_eccentricity);
 
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
-std::tuple<Eigen::Vector6f, Eigen::Vector2f> fit_solver(const Eigen::MatrixX2f& points);
-EllipseGeometry to_parametric(const Eigen::Vector6f& conic, const Eigen::Vector2f& offset);
+Conic fit_solver(const Eigen::MatrixX2f& points);
+EllipseGeometry to_ellipse_1(const Conic&);

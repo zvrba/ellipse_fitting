@@ -22,12 +22,12 @@ int main(int argc, char** argv)
       << "\nPOINTS:\n" << get<1>(problem)
       << endl;
 
-  auto solution = fit_solver(get<1>(problem));
-  cout << "COEFFICIENTS:\n" << get<0>(solution)
-      << "\nOFFSET:\n" << get<1>(solution)
+  auto conic = fit_solver(get<1>(problem));
+  cout << "COEFFICIENTS:\n" << get<0>(conic)
+      << "\nOFFSET:\n" << get<1>(conic)
       << endl;
   
-  auto geometry = to_parametric(get<0>(solution), get<1>(solution));
+  auto geometry = to_ellipse_1(conic);
   cout << "FIT:\n" << geometry << endl;
   
   return 0;

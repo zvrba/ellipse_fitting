@@ -154,10 +154,12 @@ fit_solver(const Eigen::MatrixX2f& points)
 }
 
 // Recipe taken from https://www.cs.cornell.edu/cv/OtherPdf/Ellipse.pdf
-EllipseGeometry to_parametric(const Eigen::Vector6f& conic, const Eigen::Vector2f& offset)
+EllipseGeometry to_ellipse_1(const Conic& conic)
 {
   using namespace Eigen;
-  const float aa = conic(0), bb = conic(1), cc = conic(2), dd = conic(3), ee = conic(4), ff = conic(5);
+  const auto& coef = std::get<0>(conic);
+  const auto& offset = std::get<1>(conic);
+  const float aa = coef(0), bb = coef(1), cc = coef(2), dd = coef(3), ee = coef(4), ff = coef(5);
   Matrix3f M0;
 
   // Even permutation of rows/cols wrt the paper doesn't change the determinant sign
