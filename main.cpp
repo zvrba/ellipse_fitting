@@ -56,6 +56,12 @@ static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& geometry
   namedWindow("FITTING", WINDOW_AUTOSIZE);
   Mat image(MAX_CENTER+100, MAX_CENTER+100, CV_8UC1);
   
+  for (size_t i = 0; i < points.rows(); ++i)
+    circle(image, Point(points(i,0), points(i,1)), 4, 255);
+  
+  ellipse(image, Point(geometry.center(0), geometry.center(1)), Size(geometry.radius(0), geometry.radius(1)),
+      geometry.angle, 0, 360, 255);
+  
   imshow("FITTING", image);
   waitKey(0);
 }

@@ -55,6 +55,7 @@
           <linkerLibItems>
             <linkerLibLibItem>opencv_core</linkerLibLibItem>
             <linkerLibLibItem>opencv_highgui</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -97,6 +98,7 @@
           <linkerLibItems>
             <linkerLibLibItem>opencv_core</linkerLibLibItem>
             <linkerLibLibItem>opencv_highgui</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
