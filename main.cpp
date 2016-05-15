@@ -24,8 +24,11 @@ int main(int argc, char** argv)
 
   auto solution = fit_solver(get<1>(problem));
   cout << "COEFFICIENTS:\n" << get<0>(solution)
-      << "\nCENTER:\n" << get<1>(solution)
+      << "\nOFFSET:\n" << get<1>(solution)
       << endl;
+  
+  auto geometry = to_parametric(get<0>(solution), get<1>(solution));
+  cout << "FIT:\n" << geometry << endl;
   
   return 0;
 }

@@ -61,25 +61,25 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
 /////////////////////////////////////////////////////////////////////////////
 // FITTING based on the following paper: http://autotrace.sourceforge.net/WSCG98.pdf
 
-static Eigen::Vector2f get_center(const Eigen::MatrixX2f& points)
+static Eigen::Vector2f get_offset(const Eigen::MatrixX2f& points)
 {
   auto sum = points.colwise().sum();
   return sum / points.rows();
 }
 
 static std::tuple<Eigen::Matrix3f,Eigen::Matrix3f,Eigen::Matrix3f>
-get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& center)
+get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& offset)
 {
   using namespace Eigen;
   
   const auto qf = [&](size_t i) {
     Vector2f p = points.row(i);
-    auto pc = p - center;
+    auto pc = p - offset;
     return Vector3f(pc(0)*pc(0), pc(0)*pc(1), pc(1)*pc(1));
   };
   const auto lf = [&](size_t i) {
     Vector2f p = points.row(i);
-    auto pc = p - center;
+    auto pc = p - offset;
     return Vector3f(pc(0), pc(1), 1);
   };
   
@@ -121,8 +121,8 @@ fit_solver(const Eigen::MatrixX2f& points)
     };
   } C1;
   
-  const auto center = get_center(points);
-  const auto St = get_scatter_matrix(points, center);
+  const auto offset = get_offset(points);
+  const auto St = get_scatter_matrix(points, offset);
   const auto& S1 = std::get<0>(St);
   const auto& S2 = std::get<1>(St);
   const auto& S3 = std::get<2>(St);
@@ -150,7 +150,7 @@ fit_solver(const Eigen::MatrixX2f& points)
     ret.block<3,1>(0,0) = a1;
     ret.block<3,1>(3,0) = a2;
   }
-  return std::make_tuple(ret, center);
+  return std::make_tuple(ret, offset);
 }
 
 // Recipe taken from https://www.cs.cornell.edu/cv/OtherPdf/Ellipse.pdf
