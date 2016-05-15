@@ -4,7 +4,10 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+namespace Eigen
+{
 using Vector6f = Eigen::Matrix<float, 6, 1>;
+}
 
 struct EllipseGeometry
 {
@@ -33,4 +36,5 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
     Eigen::Vector2f radiusSpan, float max_eccentricity);
 
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
-std::tuple<Vector6f, Eigen::Vector2f> fit_solver(const Eigen::MatrixX2f& points);
+std::tuple<Eigen::Vector6f, Eigen::Vector2f> fit_solver(const Eigen::MatrixX2f& points);
+EllipseGeometry to_parametric(const Eigen::Vector6f& conic, const Eigen::Vector2f& offset);

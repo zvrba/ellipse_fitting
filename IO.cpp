@@ -99,7 +99,7 @@ get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& center
   return std::make_tuple(S1, S2, S3);
 }
 
-std::tuple<Vector6f, Eigen::Vector2f>
+std::tuple<Eigen::Vector6f, Eigen::Vector2f>
 fit_solver(const Eigen::MatrixX2f& points)
 {
   using namespace Eigen;
@@ -151,4 +151,33 @@ fit_solver(const Eigen::MatrixX2f& points)
     ret.block<3,1>(3,0) = a2;
   }
   return std::make_tuple(ret, center);
+}
+
+// Recipe taken from https://www.cs.cornell.edu/cv/OtherPdf/Ellipse.pdf
+EllipseGeometry to_parametric(const Eigen::Vector6f& conic, const Eigen::Vector2f& offset)
+{
+  using namespace Eigen;
+  const float aa = conic(0), bb = conic(1), cc = conic(2), dd = conic(3), ee = conic(4), ff = conic(5);
+  Matrix3f M0;
+
+  // Even permutation of rows/cols wrt the paper doesn't change the determinant sign
+  M0 << aa, bb/2, dd/2, bb/2, cc, ee/2, dd/2, ee/2, ff;
+  auto M = M0.block<2,2>(0,0);
+  
+  float lam1, lam2, M0_det, M_det;
+  {
+    M0_det = M0.determinant();
+    M_det = M.determinant();
+    SelfAdjointEigenSolver<Matrix2f> es(M, false);
+    lam1 = es.eigenvalues()(0);
+    lam2 = es.eigenvalues()(1);
+    if (std::fabs(lam1-aa) > std::fabs(lam1-cc))
+      std::swap(lam1, lam2);
+  }
+  
+  float disc = 4*aa*cc - bb*bb;
+  Vector2f center = Vector2f(bb*ee-2*cc*dd, bb*dd-2*aa*ee) / disc;
+  Vector2f radius = Vector2f(-M0_det / (M_det*lam1), -M0_det / (M_det*lam2)).cwiseSqrt();
+  float tau = std::atan(bb/(aa-cc))/2;  // acot(x) = atan(1/x)
+  return EllipseGeometry{center+offset, radius, tau};
 }
