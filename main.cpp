@@ -6,7 +6,7 @@
 static constexpr int MAX_CENTER = 600;
 
 static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n);
-static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& geometry);
+static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, const EllipseGeometry& eg2);
 
 int main(int argc, char** argv)
 {
@@ -32,9 +32,12 @@ int main(int argc, char** argv)
       << endl;
   
   auto ell = to_ellipse(conic);
-  cout << "FIT:\n" << ell << endl;
+  cout << "FIT: " << ell << endl;
   
-  plot(get<1>(problem), ell);
+  auto cv_ell = cv_fit_ellipse(get<1>(problem));
+  cout << "CV FIT: " << cv_ell << endl;
+  
+  plot(get<1>(problem), ell, cv_ell);
   
   return 0;
 }
@@ -49,7 +52,7 @@ static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n)
   return std::make_tuple(g.geometry(), ret);
 }
 
-static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& geometry)
+static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, const EllipseGeometry& eg2)
 {
   using namespace cv;
 
@@ -59,8 +62,8 @@ static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& geometry
   for (size_t i = 0; i < points.rows(); ++i)
     circle(image, Point(points(i,0), points(i,1)), 4, 255);
   
-  ellipse(image, Point(geometry.center(0), geometry.center(1)), Size(geometry.radius(0), geometry.radius(1)),
-      geometry.angle*180/M_PI, 0, 360, 255);
+  ellipse(image, Point(eg1.center(0), eg1.center(1)), Size(eg1.radius(0), eg1.radius(1)), eg1.angle*180/M_PI, 0, 360, 255);
+  ellipse(image, Point(eg2.center(0), eg2.center(1)), Size(eg2.radius(0), eg2.radius(1)), eg2.angle*180/M_PI, 0, 360, 255);
   
   imshow("FITTING", image);
   waitKey(0);

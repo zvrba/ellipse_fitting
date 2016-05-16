@@ -38,6 +38,7 @@ public:
 EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, float sigma,
     Eigen::Vector2f radiusSpan, float max_eccentricity);
 
+EllipseGeometry cv_fit_ellipse(const Eigen::MatrixX2f& points);
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
 Conic fit_solver(const Eigen::MatrixX2f& points);
 EllipseGeometry to_ellipse(const Conic&);

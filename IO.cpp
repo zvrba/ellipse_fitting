@@ -1,10 +1,13 @@
 #include <cmath>
+#include <vector>
 #include <Eigen/Eigenvalues>
 #include <Eigen/SVD>
 #include <float.h>
+#include <opencv2/core/types.hpp>
+#include <opencv2/imgproc.hpp>
 #include "Ellipse.h"
 
-static std::ranlux24 G_engine(271828);
+static std::ranlux24 G_engine;//(271828);
 
 std::ostream& operator<<(std::ostream& os, const EllipseGeometry& eg)
 {
@@ -60,6 +63,19 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
   EllipseGeometry geometry{Eigen::Vector2f(cx, cy), Eigen::Vector2f(a, b), angle};
   return EllipseGenerator(geometry, Eigen::Vector2f(phi_min, phi_max), sigma);
 }
+
+EllipseGeometry cv_fit_ellipse(const Eigen::MatrixX2f& points)
+{
+  std::vector<cv::Point2f> cvp(points.rows());
+  for (size_t i = 0; i < points.rows(); ++i)
+    cvp[i] = cv::Point2f(points(i,0), points(i,1));
+  auto rr = cv::fitEllipse(cvp);
+  Eigen::Vector2f center(rr.center.x, rr.center.y);
+  Eigen::Vector2f radius(rr.size.width/2, rr.size.height/2);
+  float angle = rr.angle * M_PI / 180;
+  return EllipseGeometry{center, radius, angle};
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // FITTING based on the following paper: http://autotrace.sourceforge.net/WSCG98.pdf
