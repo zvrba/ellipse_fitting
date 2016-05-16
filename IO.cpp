@@ -42,7 +42,7 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
   if (angle > M_PI)
     angle -= M_PI;
   
-  // Radii; eccentricity must not be below min_eccentricity.
+  // Radii; eccentricity must not be larger than max_eccentricity.
   float a, b;
   do {
     a = radius_dist(G_engine);
