@@ -118,8 +118,7 @@ get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& offset
   return std::make_tuple(S1, S2, S3);
 }
 
-std::tuple<Eigen::Vector6f, Eigen::Vector2f>
-fit_solver(const Eigen::MatrixX2f& points)
+static Conic fit_solver(const Eigen::MatrixX2f& points)
 {
   using namespace Eigen;
   using std::get;
@@ -170,6 +169,11 @@ fit_solver(const Eigen::MatrixX2f& points)
     ret.block<3,1>(3,0) = a2;
   }
   return std::make_tuple(ret, offset);
+}
+
+EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points)
+{
+  return to_ellipse(fit_solver(points));
 }
 
 // Taken from OpenCV old code; see

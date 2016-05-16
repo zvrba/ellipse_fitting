@@ -36,7 +36,7 @@ int main(int argc, char** argv)
       << "\nPOINTS:\n" << get<1>(problem)
       << endl;
 
-  auto ell = to_ellipse(fit_solver(get<1>(problem)));
+  auto ell = fit_ellipse(get<1>(problem));
   auto conic = to_conic(ell);
   cout << "COEFFICIENTS:\n" << get<0>(conic)
       <<"\nELLIPSE: " << ell << endl;
