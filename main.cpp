@@ -5,7 +5,7 @@
 
 static constexpr int MAX_CENTER = 600;
 
-static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n);
+static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n, float sigma);
 static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, const EllipseGeometry& eg2);
 
 int main(int argc, char** argv)
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
   size_t npoints = std::atoi(argv[1]);
   float sigma = std::atof(argv[2]);
   
-  auto problem = generate_problem(npoints);
+  auto problem = generate_problem(npoints, sigma);
   cout << "PROBLEM:"
       << "\nELLIPSE:\n" << get<0>(problem)
       << "\nPOINTS:\n" << get<1>(problem)
@@ -51,9 +51,9 @@ int main(int argc, char** argv)
 }
 
 // We hard-code many of the parameters.
-static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n)
+static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n, float sigma)
 {
-  auto g = get_ellipse_generator(MAX_CENTER, 2*M_PI/16, 2, Eigen::Vector2f(40, 500), 0.9);
+  auto g = get_ellipse_generator(MAX_CENTER, 2*M_PI/16, sigma, Eigen::Vector2f(40, 500), 0.9);
   Eigen::MatrixX2f ret(n, 2);
   for (size_t i = 0; i < n; ++i)
     ret.row(i) = g();
