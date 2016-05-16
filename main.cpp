@@ -39,11 +39,16 @@ int main(int argc, char** argv)
   auto ell = fit_ellipse(get<1>(problem));
   auto conic = to_conic(ell);
   cout << "COEFFICIENTS:\n" << get<0>(conic)
-      <<"\nELLIPSE: " << ell << endl;
+      << "\nELLIPSE: " << ell
+      << "\nERROR: " << fit_error(get<1>(problem), conic)
+      << endl;
   
   auto cv_ell = cv_fit_ellipse(get<1>(problem));
-  cout << "CV COEFFICIENTS:\n" << get<0>(to_conic(cv_ell))
-      << "\nCV ELLIPSE: " << cv_ell << endl;
+  auto cv_conic = to_conic(cv_ell);
+  cout << "CV COEFFICIENTS:\n" << get<0>(cv_conic)
+      << "\nCV ELLIPSE: " << cv_ell
+      << "\nCV ERROR: " << fit_error(get<1>(problem), cv_conic)
+      << endl;
   
   plot(get<1>(problem), ell, cv_ell);
   

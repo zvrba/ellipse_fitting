@@ -233,3 +233,22 @@ Conic to_conic(const EllipseGeometry& eg)
   coef(5) = -sq(aa*bb) + coef(0)*sq(hh) + coef(1)*hh*kk + coef(2)*sq(kk);
   return std::make_tuple(coef, Eigen::Vector2f(0, 0));
 }
+
+float fit_error(const Eigen::MatrixX2f& points, const Conic& conic)
+{
+  using namespace Eigen;
+  
+  if (std::get<1>(conic) != Vector2f(0,0))
+    throw std::domain_error("fit_error: offset");
+  
+  const auto& coef = std::get<0>(conic);
+  const auto point_ev = [&](const Vector2f& p) {
+    float ev = coef(0)*p(0)*p(0) + coef(1)*p(0)*p(1) + coef(2)*p(1)*p(1) + coef(3)*p(0) + coef(4)*p(1) + coef(5);
+    return ev*ev;
+  };
+  
+  float err_sq = 0;
+  for (size_t i = 0; i < points.rows(); ++i)
+    err_sq += point_ev(points.row(i));
+  return std::sqrt(err_sq);
+}
