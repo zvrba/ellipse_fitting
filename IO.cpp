@@ -26,11 +26,11 @@ Eigen::Vector2f EllipseGenerator::operator()()
 }
 
 // eccentricity: 0->circle, limit->1: line
-EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, float sigma,
-    Eigen::Vector2f radiusSpan, float min_r_ratio)
+EllipseGenerator get_ellipse_generator(Eigen::Vector2f center_span, Eigen::Vector2f radius_span, float min_r_ratio,
+    float min_arc_angle, float sigma)
 {
-  std::uniform_real_distribution<float> center_dist(0, max_center);
-  std::uniform_real_distribution<float> radius_dist(radiusSpan(0), radiusSpan(1));
+  std::uniform_real_distribution<float> center_dist(center_span(0), center_span(1));
+  std::uniform_real_distribution<float> radius_dist(radius_span(0), radius_span(1));
   std::uniform_real_distribution<float> angle_dist(0, 2*M_PI);
   
   // Center.

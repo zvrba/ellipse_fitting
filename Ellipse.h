@@ -35,8 +35,8 @@ public:
   Eigen::Vector2f operator()();
 };
 
-EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, float sigma,
-    Eigen::Vector2f radiusSpan, float min_r_ratio);
+EllipseGenerator get_ellipse_generator(Eigen::Vector2f center_span, Eigen::Vector2f radius_span, float min_r_ratio,
+    float min_arc_angle, float sigma);
 
 EllipseGeometry cv_fit_ellipse(const Eigen::MatrixX2f& points);
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
