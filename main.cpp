@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 // We hard-code many of the parameters.
 static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n, float sigma)
 {
-  auto g = get_ellipse_generator(MAX_CENTER, 2*M_PI/16, sigma, Eigen::Vector2f(40, 500), 0.9);
+  auto g = get_ellipse_generator(MAX_CENTER, 2*M_PI/16, sigma, Eigen::Vector2f(40, 500), 0.1);
   Eigen::MatrixX2f ret(n, 2);
   for (size_t i = 0; i < n; ++i)
     ret.row(i) = g();

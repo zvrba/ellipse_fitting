@@ -7,7 +7,7 @@
 #include <opencv2/imgproc.hpp>
 #include "Ellipse.h"
 
-static std::ranlux24 G_engine;//(271828);
+static std::mt19937_64 G_engine(time(0));//(271828);
 
 std::ostream& operator<<(std::ostream& os, const EllipseGeometry& eg)
 {
@@ -27,7 +27,7 @@ Eigen::Vector2f EllipseGenerator::operator()()
 
 // eccentricity: 0->circle, limit->1: line
 EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, float sigma,
-    Eigen::Vector2f radiusSpan, float max_eccentricity)
+    Eigen::Vector2f radiusSpan, float min_r_ratio)
 {
   std::uniform_real_distribution<float> center_dist(0, max_center);
   std::uniform_real_distribution<float> radius_dist(radiusSpan(0), radiusSpan(1));
@@ -42,14 +42,14 @@ EllipseGenerator get_ellipse_generator(float max_center, float min_arc_angle, fl
   if (angle > M_PI)
     angle -= M_PI;
   
-  // Radii; eccentricity must not be larger than max_eccentricity.
+  // Radii; ratio of minor/major radii must not be < min_r_ratio
   float a, b;
   do {
     a = radius_dist(G_engine);
     b = radius_dist(G_engine);
     if (a < b)
       std::swap(a, b);
-  } while (std::sqrt(a*a-b*b) >= max_eccentricity);
+  } while (b/a < min_r_ratio);
   
   // Arc span; must be at least min_arc_angle
   float phi_min, phi_max;
