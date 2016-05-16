@@ -210,3 +210,22 @@ EllipseGeometry to_ellipse(const Conic& conic)
   float angle = M_PI - std::atan2(mat_u(0,1), mat_u(1,1));
   return EllipseGeometry{center, radius, angle};
 }
+
+Conic to_conic(const EllipseGeometry& eg)
+{
+  const float s = std::sin(eg.angle);
+  const float c = std::cos(eg.angle);
+  const float aa = eg.radius(0), bb = eg.radius(1);
+  const float hh = eg.center(0), kk = eg.center(1);
+  const auto sq = [](float x) { return x*x; };
+
+  Eigen::Vector6f coef;
+
+  coef(0) = sq(bb*c) + sq(aa*s);
+  coef(1) = -2*c*s*(sq(aa) - sq(bb));
+  coef(2) = sq(bb*s) + sq(aa*c);
+  coef(3) = -2*coef(0)*hh - kk*coef(1);
+  coef(4) = -2*coef(2)*kk - hh*coef(1);
+  coef(5) = -sq(aa*bb) + coef(0)*sq(hh) + coef(1)*hh*kk + coef(2)*sq(kk);
+  return std::make_tuple(coef, Eigen::Vector2f(0, 0));
+}

@@ -42,4 +42,4 @@ EllipseGeometry cv_fit_ellipse(const Eigen::MatrixX2f& points);
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
 Conic fit_solver(const Eigen::MatrixX2f& points);
 EllipseGeometry to_ellipse(const Conic&);
-
+Conic to_conic(const EllipseGeometry& eg);

@@ -36,16 +36,14 @@ int main(int argc, char** argv)
       << "\nPOINTS:\n" << get<1>(problem)
       << endl;
 
-  auto conic = fit_solver(get<1>(problem));
+  auto ell = to_ellipse(fit_solver(get<1>(problem)));
+  auto conic = to_conic(ell);
   cout << "COEFFICIENTS:\n" << get<0>(conic)
-      << "\nOFFSET:\n" << get<1>(conic)
-      << endl;
+      <<"\nELLIPSE: " << ell << endl;
   
-  auto ell = to_ellipse(conic);
   auto cv_ell = cv_fit_ellipse(get<1>(problem));
-  
-  cout << "FIT: " << ell << endl;
-  cout << "CV FIT: " << cv_ell << endl;
+  cout << "CV COEFFICIENTS:\n" << get<0>(to_conic(cv_ell))
+      << "\nCV ELLIPSE: " << cv_ell << endl;
   
   plot(get<1>(problem), ell, cv_ell);
   
