@@ -206,7 +206,7 @@ EllipseGeometry to_ellipse(const Conic& conic)
   const auto& mat_u = svd.matrixU();
 
   Vector2f center = c + std::get<1>(conic);
-  Vector2f radius = Vector2f(std::sqrt(1.f/vals(1)), std::sqrt(1.f/vals(0)));
-  float angle = M_PI - std::atan2(mat_u(1,0), mat_u(0,0));
+  Vector2f radius = Vector2f(std::sqrt(1.f/vals(0)), std::sqrt(1.f/vals(1)));
+  float angle = M_PI - std::atan2(mat_u(0,1), mat_u(1,1));
   return EllipseGeometry{center, radius, angle};
 }
