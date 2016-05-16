@@ -164,7 +164,7 @@ fit_solver(const Eigen::MatrixX2f& points)
   
   Vector6f ret = Matrix<float, 6, 1>::Zero();
   if (imin >= 0) {
-    Vector3f a1 = M_ev.eigenvectors().real().row(imin);
+    Vector3f a1 = M_ev.eigenvectors().real().col(imin);
     Vector3f a2 = T*a1;
     ret.block<3,1>(0,0) = a1;
     ret.block<3,1>(3,0) = a2;
