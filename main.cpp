@@ -31,10 +31,18 @@ int main(int argc, char** argv)
       << "\nOFFSET:\n" << get<1>(conic)
       << endl;
   
-  auto ell = to_ellipse(conic);
-  cout << "FIT: " << ell << endl;
+  EllipseGeometry ell, cv_ell;
   
-  auto cv_ell = cv_fit_ellipse(get<1>(problem));
+  try {
+    cv_ell = cv_fit_ellipse(get<1>(problem));
+    ell = to_ellipse(conic);
+  }
+  catch (std::domain_error& e) {
+    cout << "FIT FAILED: " << e.what() << endl;
+    ell = EllipseGeometry{Eigen::Vector2f(0,0), Eigen::Vector2f(0,0), 0};
+  }
+
+  cout << "FIT: " << ell << endl;
   cout << "CV FIT: " << cv_ell << endl;
   
   plot(get<1>(problem), ell, cv_ell);
