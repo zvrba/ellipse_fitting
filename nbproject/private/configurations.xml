@@ -17,7 +17,7 @@
         </gdb_signals>
         <gdb_options>
           <DebugOptions>
-            <option name="debug_command" value="${OUTPUT_PATH} 20 1"/>
+            <option name="debug_command" value="${OUTPUT_PATH} FAIL 1"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
