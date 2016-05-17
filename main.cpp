@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <functional>
 #include <opencv/cv.hpp>
 #include "Ellipse.h"
 
@@ -9,7 +10,9 @@ static constexpr size_t MAX_SIZE = 1920;
 
 static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n, float sigma);
 static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_cv_fail();
-static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, const EllipseGeometry& eg2);
+static void output_solution(const std::string& name, const Eigen::MatrixX2f& points, std::function<EllipseGeometry(const Eigen::MatrixX2f&)> solver,
+    cv::Mat& image, cv::Scalar color, int thickness);
+static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, const EllipseGeometry& eg2, const EllipseGeometry& eg3);
 
 int main(int argc, char** argv)
 {
@@ -30,28 +33,27 @@ int main(int argc, char** argv)
     float sigma = std::atof(argv[2]);
     problem = generate_problem(npoints, sigma);
   }
+
+  const auto& points = get<1>(problem);
   
   cout << "PROBLEM:"
       << "\nELLIPSE:\n" << get<0>(problem)
-      << "\nPOINTS:\n" << get<1>(problem)
+      << "\nPOINTS:\n" << points
       << endl;
+  
+  cv::namedWindow("FITTING", cv::WINDOW_AUTOSIZE);
+  cv::Mat image(MAX_SIZE, MAX_SIZE, CV_8UC4);
+  
+  // Plot points: white
+  for (size_t i = 0; i < points.rows(); ++i)
+    cv::circle(image, cv::Point(points(i,0), points(i,1)), 6, cv::Scalar(255, 255, 255));
+  
+  output_solution("AL_FIT", points, fit_ellipse, image, cv::Scalar(255, 0, 255), 2);      // algebraic fit; purple
+  output_solution("CV_FIT", points, cv_fit_ellipse, image, cv::Scalar(0, 0, 255), 1);     // CV fit: red
+  //output_solution("GE_FIT", points, geom_fit_ellipse, image, cv::Scalar(255, 0, 0), 1); // geometric fit: blue
 
-  auto ell = fit_ellipse(get<1>(problem));
-  auto conic = to_conic(ell);
-  cout << "COEFFICIENTS:\n" << get<0>(conic)
-      << "\nELLIPSE: " << ell
-      << "\nERROR: " << fit_error(get<1>(problem), conic)
-      << endl;
-  
-  auto cv_ell = cv_fit_ellipse(get<1>(problem));
-  auto cv_conic = to_conic(cv_ell);
-  cout << "CV COEFFICIENTS:\n" << get<0>(cv_conic)
-      << "\nCV ELLIPSE: " << cv_ell
-      << "\nCV ERROR: " << fit_error(get<1>(problem), cv_conic)
-      << endl;
-  
-  plot(get<1>(problem), ell, cv_ell);
-  
+  cv::imshow("FITTING", image);
+  cv::waitKey(0);
   return 0;
 }
 
@@ -64,23 +66,6 @@ static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_problem(size_t n, 
   for (size_t i = 0; i < n; ++i)
     ret.row(i) = g();
   return std::make_tuple(g.geometry(), ret);
-}
-
-static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, const EllipseGeometry& eg2)
-{
-  using namespace cv;
-
-  namedWindow("FITTING", WINDOW_AUTOSIZE);
-  Mat image(MAX_SIZE, MAX_SIZE, CV_8UC4);
-  
-  for (size_t i = 0; i < points.rows(); ++i)
-    circle(image, Point(points(i,0), points(i,1)), 6, Scalar(255, 255, 255));
-  
-  ellipse(image, Point(eg1.center(0), eg1.center(1)), Size(eg1.radius(0), eg1.radius(1)), eg1.angle*180/M_PI, 0, 360, Scalar(255, 0, 255), 2);
-  ellipse(image, Point(eg2.center(0), eg2.center(1)), Size(eg2.radius(0), eg2.radius(1)), eg2.angle*180/M_PI, 0, 360, Scalar(0, 0, 255), 1);
-  
-  imshow("FITTING", image);
-  waitKey(0);
 }
 
 static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_cv_fail()
@@ -101,3 +86,17 @@ static std::tuple<EllipseGeometry, Eigen::MatrixX2f> generate_cv_fail()
       917.474, 791.823;
   return std::make_tuple(geom, data);
 }
+
+static void output_solution(const std::string& name, const Eigen::MatrixX2f& points, std::function<EllipseGeometry(const Eigen::MatrixX2f&)> solver,
+    cv::Mat& image, cv::Scalar color, int thickness)
+{
+  auto ell = solver(points);
+  auto conic = to_conic(ell);
+  std::cout << name
+      << "\nCOEFFICIENTS:\n" << std::get<0>(conic)
+      << "\nELLIPSE: " << ell
+      << "\nERROR: " << fit_error(points, conic)
+      << std::endl;
+  cv::ellipse(image, cv::Point(ell.center(0), ell.center(1)), cv::Size(ell.radius(0), ell.radius(1)), ell.angle*180/M_PI, 0, 360, color, thickness);
+}
+
