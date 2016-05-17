@@ -38,7 +38,9 @@ static PhiOffset get_phi_offset(const Eigen::MatrixX2f& points)
     throw std::domain_error("geom_fit_ellipse: too few points");
   
   // XXX: Should be computed directly, see the paper
-  auto phi = (X.transpose()*X).inverse() * X.transpose() * Y;
+  auto G = X.transpose() * X;
+  auto Gi = G.inverse();
+  Vector5f phi = Gi * X.transpose() * Y;
   return std::make_tuple(phi, offset);
 }
 
