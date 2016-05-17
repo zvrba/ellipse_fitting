@@ -39,9 +39,10 @@ EllipseGenerator get_ellipse_generator(Eigen::Vector2f center_span, Eigen::Vecto
     float min_arc_angle, float sigma);
 
 EllipseGeometry fit_ellipse(const Eigen::MatrixX2f& points);
-EllipseGeometry fit_discrete_ellipse(const Eigen::Matrix2f& points);
+EllipseGeometry geom_fit_ellipse(const Eigen::MatrixX2f& points);
 EllipseGeometry cv_fit_ellipse(const Eigen::MatrixX2f& points);
 float fit_error(const Eigen::MatrixX2f& points, const Conic& conic);
 
+Eigen::Vector2f get_offset(const Eigen::MatrixX2f& points);
 EllipseGeometry to_ellipse(const Conic&);
 Conic to_conic(const EllipseGeometry& eg);

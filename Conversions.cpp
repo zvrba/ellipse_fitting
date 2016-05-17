@@ -2,6 +2,12 @@
 #include <cfloat>
 #include "Ellipse.h"
 
+Eigen::Vector2f get_offset(const Eigen::MatrixX2f& points)
+{
+  auto sum = points.colwise().sum();
+  return sum / points.rows();
+}
+
 // Taken from OpenCV old code; see
 // https://github.com/Itseez/opencv/commit/4eda1662aa01a184e0391a2bb2e557454de7eb86#diff-97c8133c3c171e64ea0df0db4abd033c
 EllipseGeometry to_ellipse(const Conic& conic)

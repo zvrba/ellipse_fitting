@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/Conversions.o \
+	${OBJECTDIR}/DiscreteFit.o \
 	${OBJECTDIR}/EllipseGenerator.o \
 	${OBJECTDIR}/LSFit.o \
 	${OBJECTDIR}/main.o
@@ -69,6 +70,11 @@ ${OBJECTDIR}/Conversions.o: Conversions.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/usr/include/eigen3 -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Conversions.o Conversions.cpp
+
+${OBJECTDIR}/DiscreteFit.o: DiscreteFit.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/usr/include/eigen3 -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/DiscreteFit.o DiscreteFit.cpp
 
 ${OBJECTDIR}/EllipseGenerator.o: EllipseGenerator.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -23,12 +23,6 @@ EllipseGeometry cv_fit_ellipse(const Eigen::MatrixX2f& points)
 /////////////////////////////////////////////////////////////////////////////
 // FITTING based on the following paper: http://autotrace.sourceforge.net/WSCG98.pdf
 
-static Eigen::Vector2f get_offset(const Eigen::MatrixX2f& points)
-{
-  auto sum = points.colwise().sum();
-  return sum / points.rows();
-}
-
 static std::tuple<Eigen::Matrix3f,Eigen::Matrix3f,Eigen::Matrix3f>
 get_scatter_matrix(const Eigen::MatrixX2f& points, const Eigen::Vector2f& offset)
 {

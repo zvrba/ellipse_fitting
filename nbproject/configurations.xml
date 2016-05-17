@@ -14,6 +14,7 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>Conversions.cpp</itemPath>
+      <itemPath>DiscreteFit.cpp</itemPath>
       <itemPath>EllipseGenerator.cpp</itemPath>
       <itemPath>LSFit.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -63,6 +64,8 @@
       </compileType>
       <item path="Conversions.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="DiscreteFit.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="EllipseGenerator.cpp" ex="false" tool="1" flavor2="0">
@@ -109,6 +112,8 @@
         </linkerTool>
       </compileType>
       <item path="Conversions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="DiscreteFit.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
