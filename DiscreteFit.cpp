@@ -29,7 +29,7 @@ static PhiOffset get_phi_offset(const Eigen::MatrixX2f& points)
     X(i,1) = -p(0)*p(1);
     X(i,2) = p(0);
     X(i,3) = p(1);
-    X(i,4) = 1;
+    X(i,4) = -1;
     Y(i) = p(1) * p(1);
     zero_count += std::fabs(p(1)) < 2*FLT_EPSILON;
   }
@@ -55,8 +55,8 @@ static Eigen::Vector5f get_a(const PhiOffset& phi_offset)
   {
     float nom = f2*f3*f4 - f4*f4*f1 - f3*f3 - f5*disc;
     float den1 = std::sqrt((1-f1)*(1-f1) + f2*f2);
-    A(0) = 2*std::sqrt(nom / (-disc*(1+f1-den1)));
-    A(1) = 2*std::sqrt(nom / (-disc*(1+f1+den1)));
+    A(0) = 2*std::sqrt(nom / (disc*(1+f1-den1)));
+    A(1) = 2*std::sqrt(nom / (disc*(1+f1+den1)));
   }
   
   A(2) = -std::atan2(-f2, 1-f1)/2;
