@@ -21,6 +21,8 @@ static PhiOffset get_phi_offset(const Eigen::MatrixX2f& points)
   size_t zero_count = 0;
   
   Matrix<float, Dynamic, 5> X(n, 5);
+  VectorXf Y(n);
+
   for (size_t i = 0; i < n; ++i) {
     auto p = points.row(i).transpose() - offset;
     X(i,0) = -p(0)*p(0);
@@ -28,15 +30,12 @@ static PhiOffset get_phi_offset(const Eigen::MatrixX2f& points)
     X(i,2) = p(0);
     X(i,3) = p(1);
     X(i,4) = 1;
+    Y(i) = p(1) * p(1);
     zero_count += p(1) < 2*FLT_EPSILON;
   }
   
   if (n - zero_count < 5)
     throw std::domain_error("geom_fit_ellipse: too few points");
-  
-  VectorXf Y(n);
-  for (size_t i = 0; i < n; ++i)
-    Y(i) = points(i, 1) - offset(1);
   
   // XXX: Should be computed directly, see the paper
   auto phi = (X.transpose()*X).inverse() * X.transpose() * Y;
@@ -68,7 +67,7 @@ static Eigen::Vector5f get_a(const PhiOffset& phi_offset)
   return A;
 }
 
-EllipseGeometry geom_fit_ellipse(const Eigen::Matrix2f& points)
+EllipseGeometry geom_fit_ellipse(const Eigen::MatrixX2f& points)
 {
   using Eigen::Vector2f;
   auto phi_offset = get_phi_offset(points);
