@@ -71,13 +71,13 @@ static void plot(const Eigen::MatrixX2f& points, const EllipseGeometry& eg1, con
   using namespace cv;
 
   namedWindow("FITTING", WINDOW_AUTOSIZE);
-  Mat image(MAX_SIZE, MAX_SIZE, CV_8UC1);
+  Mat image(MAX_SIZE, MAX_SIZE, CV_8UC4);
   
   for (size_t i = 0; i < points.rows(); ++i)
-    circle(image, Point(points(i,0), points(i,1)), 4, 255);
+    circle(image, Point(points(i,0), points(i,1)), 6, Scalar(255, 255, 255));
   
-  ellipse(image, Point(eg1.center(0), eg1.center(1)), Size(eg1.radius(0), eg1.radius(1)), eg1.angle*180/M_PI, 0, 360, 255, 2);
-  ellipse(image, Point(eg2.center(0), eg2.center(1)), Size(eg2.radius(0), eg2.radius(1)), eg2.angle*180/M_PI, 0, 360, 255, 1);
+  ellipse(image, Point(eg1.center(0), eg1.center(1)), Size(eg1.radius(0), eg1.radius(1)), eg1.angle*180/M_PI, 0, 360, Scalar(255, 0, 255), 2);
+  ellipse(image, Point(eg2.center(0), eg2.center(1)), Size(eg2.radius(0), eg2.radius(1)), eg2.angle*180/M_PI, 0, 360, Scalar(0, 0, 255), 1);
   
   imshow("FITTING", image);
   waitKey(0);
