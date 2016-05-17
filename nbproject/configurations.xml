@@ -13,7 +13,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>IO.cpp</itemPath>
+      <itemPath>Conversions.cpp</itemPath>
+      <itemPath>EllipseGenerator.cpp</itemPath>
+      <itemPath>LSFit.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -59,9 +61,13 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="Conversions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="IO.cpp" ex="false" tool="1" flavor2="0">
+      <item path="EllipseGenerator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LSFit.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -102,9 +108,13 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="Conversions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="Ellipse.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="IO.cpp" ex="false" tool="1" flavor2="0">
+      <item path="EllipseGenerator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LSFit.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>

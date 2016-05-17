@@ -35,7 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/IO.o \
+	${OBJECTDIR}/Conversions.o \
+	${OBJECTDIR}/EllipseGenerator.o \
+	${OBJECTDIR}/LSFit.o \
 	${OBJECTDIR}/main.o
 
 
@@ -63,10 +65,20 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ellipsefitting: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/ellipsefitting ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/IO.o: IO.cpp 
+${OBJECTDIR}/Conversions.o: Conversions.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/eigen3 -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/IO.o IO.cpp
+	$(COMPILE.cc) -g -I/usr/include/eigen3 -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Conversions.o Conversions.cpp
+
+${OBJECTDIR}/EllipseGenerator.o: EllipseGenerator.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/eigen3 -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/EllipseGenerator.o EllipseGenerator.cpp
+
+${OBJECTDIR}/LSFit.o: LSFit.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/usr/include/eigen3 -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/LSFit.o LSFit.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
